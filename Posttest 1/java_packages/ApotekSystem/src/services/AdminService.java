@@ -6,6 +6,7 @@ import models.ResepDokter;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.Iterator;
 
 public class AdminService {
     private ArrayList<Obat> daftarObat;
@@ -131,46 +132,41 @@ public class AdminService {
     }
 
     private void verifikasiResep() {
-
-        boolean adaResepBelumVerifikasi = false;
-        for (ResepDokter resep : daftarResep) {
-            if (!resep.isStatusVerifikasi()) {
-                adaResepBelumVerifikasi = true;
-                break;
-            }
-        }
-
-        if (!adaResepBelumVerifikasi) {
+        if (daftarResep.isEmpty()) {
             System.out.println("Tidak ada resep yang perlu diverifikasi.");
             return;
         }
+    
         System.out.println("\n=== DAFTAR RESEP MENUNGGU VERIFIKASI ===");
-        for (ResepDokter resep : daftarResep) {
+        Iterator<ResepDokter> iterator = daftarResep.iterator();
+        while (iterator.hasNext()) {
+            ResepDokter resep = iterator.next();
             if (!resep.isStatusVerifikasi()) {
                 resep.tampilkanResep();
                 System.out.print("Setujui resep ini? (y/n): ");
                 String keputusan = scanner.nextLine();
                 if (keputusan.equalsIgnoreCase("y")) {
                     resep.setStatusVerifikasi(true);
-                    this.perbaruiStatusTransaksi(resep);
+                    perbaruiStatusTransaksi(resep, "Terverifikasi");
                     System.out.println("Resep berhasil diverifikasi.");
                 } else {
-                    System.out.println("Resep tidak disetujui.");
-                    daftarResep.remove(resep);
+                    System.out.println("Resep tidak disetujui. Menghapus dari daftar verifikasi.");
+                    iterator.remove();
+                    perbaruiStatusTransaksi(resep, "Resep Ditolak");
                 }
             }
         }
     }
-
-    private void perbaruiStatusTransaksi(ResepDokter resep) {
+    
+    private void perbaruiStatusTransaksi(ResepDokter resep, String statusBaru) {
         for (Transaksi transaksi : daftarTransaksi) {
             if (transaksi.getIdObat() == resep.getIdObat() && transaksi.getIdPelanggan() == resep.getIdPelanggan()
                     && transaksi.getStatusTransaksi().equals("Menunggu Verifikasi Resep")) {
-                transaksi.setStatusTransaksi("Terverifikasi");
+                transaksi.setStatusTransaksi(statusBaru);
             }
         }
     }
-
+    
     private int inputAngka() {
         while (true) {
             try {
