@@ -108,7 +108,7 @@ public class Transaksi {
         System.out.println("Jumlah: " + jumlah);
         System.out.println("Total Harga: Rp " + totalHarga);
         System.out.println("Tanggal: "  + tanggal);
-        System.out.println("Status Transaksi: " + statusTransaksi);
+        System.out.println("Status Resep: " + statusTransaksi);
         System.out.println("Metode Pembayaran: " + metodePembayaran);
         System.out.println("Status Pengambilan: " + statusPengambilan);
         System.out.println("Alamat: " + alamat);
